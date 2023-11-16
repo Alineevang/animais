@@ -14,7 +14,7 @@ export class AnimaisList {
         this.animais.push(animal)
     }
 
-    updateAnimal(nome, idade, tipo, cor, status, imagem) {
+    updateAnimal(id, nome, idade, tipo, cor, vacinado, imagem) {
         const animal = this.getAnimalById(id);
 
         if (!animal) {
@@ -24,7 +24,7 @@ export class AnimaisList {
         animal.idade = idade;
         animal.tipo = tipo;
         animal.cor = cor;
-        animal.status = status;
+        animal.vacinado = vacinado;
         animal.imagem = imagem;
 
         return animal;

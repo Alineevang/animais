@@ -1,20 +1,13 @@
-import { Animais } from "../models/animais/animais";
-import { AnimaisList } from "../models/animais/animaisList";
+import { Animais } from "../models/animais/animais.js";
+import { AnimaisList } from "../models/animais/animaisList.js";
 
 const list = new AnimaisList();
 
 export const buscarTodosAnimais = (req, res) => {
     const animais = list.getAllAnimais();
 
-    if (!animais.length) {
-        return res.status(404).send({
-            message: "Animais econtrados",
-            status: "Not Foud",
-        });
-    }
      return res.status(200).send({
-     message: "GET ALL animals found controller",
-     status: "Ok",
+     message: "Animal encontrado",
  });
  }
 
@@ -36,44 +29,63 @@ export const buscarTodosAnimais = (req, res) => {
 });
 };
 
-
 export const criarAnimal = (req, res) => {
-    const {nome, idade, tipo, cor, status, imagem} = req.body;
+    const {nome, idade, tipo, cor, vacinado, imagem} = req.body;
 
-    if (!nome || !idade || !tipo || !cor|| !status|| !imagem) {
+    if (!nome || !idade || !tipo || !cor|| !vacinado|| !imagem) {
         return res.status(400).send({
             message: "Dados inválidos",
-            origem: "Controller"
         })
     }
-    return res.status(201).send ({
-        message: "Rotas POST animal",
-        origem: "Controller",   
-});
-}
 
-const animais = new Animais (nome, idade, tipo, cor, status, imagem)
+    if (nome.length < 3 || nome.length > 50) {
+        return res.status(400).send({
+            message: "Nome inválido digite entre 3 e 50 caracteres",
+        })
+    }
+    if (idade < 0) {
+        return res.status(400).send({
+            message: "Idade inválida",
+        })
+    }
+    
+    if (tipo.length >= 30) {
+        return res.status(400).send({
+            message: "Tipo inválido digite entre 30 caracteres",
+        })
+    }
+    
+    if (cor.length >= 20) {
+        return res.status(400).send({
+            message: "Tipo inválido digite entre 30 caracteres",
+        })
+    }
+const animais = new Animais (nome, idade, tipo, cor, vacinado, imagem)
+list.createAnimal(animais);
+    return res.status(201).send ({
+        message: "Animais criados com sucesso",
+        data : animais   
+});
+};
+
 
 export const atualizarAnimal = (req, res) => {
     const {id} = req.params;
-    const {nome, idade, tipo, cor, status, imagem} = req.body;
+    const {nome, idade, tipo, cor, vacinado, imagem} = req.body;
 
-    if (!nome || !idade || !tipo || !cor|| !status|| !imagem) {
+    if (!nome || !idade || !tipo || !cor|| !vacinado|| !imagem) {
         return res.status(400).send({
-            message: "Atualização não realizada",
-            origem: "Controller"
+            message: "Atualização realizada",
         })
     }
     return res.status(201).send ({
-        message: "Rotas PUT animal",
-        origem: "Controller",   
+        message: `Animal ${id} atulizado`,
 });
 };
 
 export const deletarAnimal = (req, res) => {
     const {id} = req.params;
     return res.status(200).send ({
-        message: "Rotas DELETE animal",
-        origem: "Controller",   
+        message: `Animal ${id} excluído `,
 });
 };
