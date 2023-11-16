@@ -5,34 +5,47 @@ const list = new AnimaisList();
 
 export const buscarTodosAnimais = (req, res) => {
     const animais = list.getAllAnimais();
+    if (!animais.length) {
+        return res.status(404).send({
+            message: "Não há animais cadastrados",
+        })
+    }
+    return res.status(200).send({
+        message: "Animal encontrado",
+        contador: `${animais.length}`,
+        data: animais
+    });
+}
 
-     return res.status(200).send({
-     message: "Animal encontrado",
- });
- }
-
- export const buscarAnimaisPorId = (req, res) => {
-    const {id} = req.params;
+export const buscarAnimaisPorId = (req, res) => {
+    const { id } = req.params;
 
     const animal = list.getAnimalById(id);
 
     if (!animal) {
-       return res.status(404).send ({
-           message: "Animal for ID found",
-           origem: "Controller",
-       })
+        return res.status(404).send({
+            message: `Animal encontrado pelo ID ${id}`,
+        })
     }
 
     return res.status(200).send({
-    message: `GET ALL ID animal ${id}`,
-    origem: "Controller",
-});
+        message: `GET ALL ID animal ${id}`,
+        origem: "Controller",
+    });
 };
 
 export const criarAnimal = (req, res) => {
-    const {nome, idade, tipo, cor, vacinado, imagem} = req.body;
+    const { nome, idade, tipo, cor, vacinado, imagem } = req.body;
 
-    if (!nome || !idade || !tipo || !cor|| !vacinado|| !imagem) {
+    const isURLValid = (url) => {
+        if(url.match(/\.(jpeg|jpg|gif|png)$/) != null){
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    if (!nome || !idade || !tipo || !cor || !vacinado || !imagem) {
         return res.status(400).send({
             message: "Dados inválidos",
         })
@@ -48,44 +61,56 @@ export const criarAnimal = (req, res) => {
             message: "Idade inválida",
         })
     }
-    
+
     if (tipo.length >= 30) {
         return res.status(400).send({
             message: "Tipo inválido digite entre 30 caracteres",
         })
     }
-    
+
     if (cor.length >= 20) {
         return res.status(400).send({
             message: "Tipo inválido digite entre 30 caracteres",
         })
     }
-const animais = new Animais (nome, idade, tipo, cor, vacinado, imagem)
-list.createAnimal(animais);
-    return res.status(201).send ({
-        message: "Animais criados com sucesso",
-        data : animais   
-});
+
+    if (typeof vacinado != 'boolean') {
+        return res.status(400).send({
+            message: "Vacinado inválido! O valor deve ser verdadeiro ou falso!"
+        })
+    }
+
+    if (isURLValid(imagem) === false) {
+        return res.status(400).send({
+            message: "URL da imagem é inválida!"
+        });
+    }
+
+    const animais = new Animais(nome, idade, tipo, cor, vacinado, imagem)
+    list.createAnimal(animais);
+    return res.status(201).send({
+        message: "Animal cadastrado com sucesso",
+        data: animais
+    });
 };
 
-
 export const atualizarAnimal = (req, res) => {
-    const {id} = req.params;
-    const {nome, idade, tipo, cor, vacinado, imagem} = req.body;
+    const { id } = req.params;
+    const { nome, idade, tipo, cor, vacinado, imagem } = req.body;
 
-    if (!nome || !idade || !tipo || !cor|| !vacinado|| !imagem) {
+    if (!nome || !idade || !tipo || !cor || !vacinado || !imagem) {
         return res.status(400).send({
             message: "Atualização realizada",
         })
     }
-    return res.status(201).send ({
+    return res.status(201).send({
         message: `Animal ${id} atulizado`,
-});
+    });
 };
 
 export const deletarAnimal = (req, res) => {
-    const {id} = req.params;
-    return res.status(200).send ({
+    const { id } = req.params;
+    return res.status(200).send({
         message: `Animal ${id} excluído `,
-});
+    });
 };

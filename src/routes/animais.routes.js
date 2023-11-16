@@ -12,7 +12,7 @@ const rotasAnimais = Router();
 
 rotasAnimais.get("/", buscarTodosAnimais);
 
-rotasAnimais.get("/id", buscarAnimaisPorId);
+rotasAnimais.get("/:id", buscarAnimaisPorId);
 
 rotasAnimais.post("/", criarAnimal);
 
